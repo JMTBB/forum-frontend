@@ -37,7 +37,7 @@
                   <v-spacer></v-spacer>
 
                   <v-btn outlined class="mx-6" @click="login=false;reset()">账号注册</v-btn>
-                  <v-btn color="primary">登录</v-btn>
+                  <v-btn color="primary" :disabled="!valid" @click="handleLogin()">登录</v-btn>
                 </v-row>
               </v-container>
 
@@ -83,7 +83,7 @@
                   <v-spacer></v-spacer>
                   <v-btn outlined class="mx-6" @click="login=true;reset()">已有账号? 登录</v-btn>
 
-                  <v-btn color="success">注册</v-btn>
+                  <v-btn color="success" :disabled="!valid" @click="handleRegister()">注册</v-btn>
                 </v-row>
               </v-container>
             </v-form>
@@ -103,6 +103,8 @@
   </div>
 </template>
 <script>
+import { login } from "../api/api";
+import { register } from "../api/api";
 export default {
   data: () => ({
     login: true, //indicator for login or register
@@ -138,11 +140,28 @@ export default {
       this.$refs.login.reset();
       this.$refs.register.reset();
     },
+    validate(islogin) {
+      islogin ? this.$refs.login.validate() : this.$refs.register.validate();
+    },
     handleLogin() {
       //account login
+      login(this.user).then((dataGotten) => {
+        let { code, message, data } = dataGotten;
+        if (code != 400) {
+          console.log(message);
+          console.log(data);
+        }
+      });
     },
     handleRegister() {
       //account register
+      register(this.user).then((dataGotten) => {
+        let { code, message, data } = dataGotten;
+        if (code != 400) {
+          console.log(message);
+          console.log(data);
+        }
+      });
     },
   },
   computed: {
