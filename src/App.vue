@@ -27,7 +27,7 @@
       <v-responsive class="pa-6 mx-auto" max-width="1304px">
         <v-row class="pa-0 ma-0">
           <v-col cols="8" md="8">
-            <HelloWorld />
+            <router-view />
           </v-col>
           <v-col cols="4" md="4">
             <v-card class="mx-auto" color="#26c6da" dark max-width="400">
@@ -74,14 +74,10 @@
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
-
 export default {
   name: "App",
 
-  components: {
-    HelloWorld,
-  },
+  components: {},
 
   props: {
     source: String,
@@ -95,5 +91,8 @@ export default {
 }
 .basil {
   background-color: #fffbe6 !important;
+}
+#app {
+  background-color: #e2e2e2;
 }
 </style>
