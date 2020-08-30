@@ -70,14 +70,19 @@
     <!-- <v-btn bottom color="pink" dark fab fixed right @click="dialog = !dialog">
       <v-icon>mdi-plus</v-icon>
     </v-btn>-->
+    <!-- Global snackbar to show message -->
+    <SnackBar />
   </v-app>
 </template>
 
 <script>
+import SnackBar from "./components/GlobalSnackBar.vue";
 export default {
   name: "App",
 
-  components: {},
+  components: {
+    SnackBar, //global snackbar
+  },
 
   props: {
     source: String,

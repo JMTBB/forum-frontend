@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 
 import Login from '../components/LoginAndRegister.vue'
+import Editor from '../views/Editor.vue'
 
 Vue.use(VueRouter)
 
@@ -29,6 +30,11 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/editor',
+    name: 'Editor',
+    component: Editor
   }
 ]
 

@@ -70,6 +70,11 @@
     <p>{{formHasErrors}}</p>
     <p>{{text}}</p>
     <v-btn @click="show=!show" color="success">SHOW</v-btn>
+    <v-container>
+      <v-btn @click="test()">测试Snackbar</v-btn>
+      <v-divider />
+      <v-btn @click="injectTest()">注入测试</v-btn>
+    </v-container>
     <!-- preview of thread start  -->
     <v-card class="mb-1" v-for="(eco, i) in importantLinks" :key="i">
       <v-row class="px-6" align="center">
@@ -287,5 +292,17 @@ export default {
       "orange darken-1",
     ],
   }),
+  methods: {
+    test() {
+      this.$notifier.showMessage({ content: "Hello, snackbar", color: "info" });
+    },
+    injectTest() {
+      console.log(this.$store.state.content);
+      this.$store.commit("showMessage", { content: "aaa", color: "success" });
+
+      console.log(this.$store.state.content);
+      this.$notifier.test();
+    },
+  },
 };
 </script>

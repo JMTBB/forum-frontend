@@ -98,6 +98,13 @@
           </v-sheet>
         </v-col>
         <!-- </v-expand-transition> -->
+        <v-progress-linear
+          :active="loading"
+          :indeterminate="loading"
+          absolute
+          :color="login ? 'bule' : 'green'"
+          bottom
+        ></v-progress-linear>
       </v-row>
     </v-card>
   </div>
@@ -105,11 +112,13 @@
 <script>
 import { login } from "../api/api";
 import { register } from "../api/api";
+import { mapMutations } from "vuex";
 export default {
   data: () => ({
     login: true, //indicator for login or register
     height: null, //height of the card
     valid: false, //valid tag for the form
+    loading: false, //linaer progress
     user: {
       //bind while login or register
       userEmail: "",
@@ -117,7 +126,7 @@ export default {
       userPassword: "",
     },
     repassword: "", //confirm the password
-
+    userToken: "",  //userToken
     //validation begin
     checkEmail: [
       (v) => !!v || "邮箱不能为空",
@@ -135,6 +144,7 @@ export default {
   },
 
   methods: {
+    ...mapMutations(["showMessage", "addUserInfo"]),
     reset() {
       //reset the forms
       this.$refs.login.reset();
@@ -145,23 +155,49 @@ export default {
     },
     handleLogin() {
       //account login
-      login(this.user).then((dataGotten) => {
-        let { code, message, data } = dataGotten;
-        if (code != 400) {
-          console.log(message);
-          console.log(data);
-        }
-      });
+      this.loading = true;
+      login(this.user)
+        .then((dataGotten) => {
+          this.loading = false;
+          let { code, message, data } = dataGotten;
+          if (code != 400) {
+            console.log(message);
+            console.log(data);
+
+            this.showMessage({
+              content: "登录成功",
+              color: "success",
+            });
+            // this.userToken = "Bearer " + data.token;
+            // this.addUserInfo({ Authorization: this.userToken });
+
+            // this.$store.commit("showMessage", { content: "aaa", color: "success" });
+          } else {
+            this.showMessage({
+              content: message,
+              color: "error",
+            });
+          }
+        })
+        .catch(() => {
+          console.log("登录错误");
+        });
     },
     handleRegister() {
+      this.loading = true;
       //account register
-      register(this.user).then((dataGotten) => {
-        let { code, message, data } = dataGotten;
-        if (code != 400) {
-          console.log(message);
-          console.log(data);
-        }
-      });
+      register(this.user)
+        .then((dataGotten) => {
+          this.loading = false;
+          let { code, message, data } = dataGotten;
+          if (code != 400) {
+            console.log(message);
+            console.log(data);
+          }
+        })
+        .catch(() => {
+          console.log("注册错误");
+        });
     },
   },
   computed: {
