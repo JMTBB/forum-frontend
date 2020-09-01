@@ -126,7 +126,7 @@ export default {
       userPassword: "",
     },
     repassword: "", //confirm the password
-    userToken: "",  //userToken
+    userToken: "", //userToken
     //validation begin
     checkEmail: [
       (v) => !!v || "邮箱不能为空",
@@ -160,7 +160,8 @@ export default {
         .then((dataGotten) => {
           this.loading = false;
           let { code, message, data } = dataGotten;
-          if (code != 400) {
+          console.log(dataGotten);
+          if (code && code != 400) {
             console.log(message);
             console.log(data);
 
@@ -168,10 +169,13 @@ export default {
               content: "登录成功",
               color: "success",
             });
-            // this.userToken = "Bearer " + data.token;
-            // this.addUserInfo({ Authorization: this.userToken });
+            this.userToken = "Bearer " + data.jwt;
+            this.addUserInfo({ Authorization: this.userToken });
 
-            // this.$store.commit("showMessage", { content: "aaa", color: "success" });
+            this.$store.commit("showMessage", {
+              content: data.username,
+              color: "success",
+            });
           } else {
             this.showMessage({
               content: message,
@@ -179,8 +183,9 @@ export default {
             });
           }
         })
-        .catch(() => {
+        .catch((data) => {
           console.log("登录错误");
+          console.log(data);
         });
     },
     handleRegister() {
@@ -190,9 +195,18 @@ export default {
         .then((dataGotten) => {
           this.loading = false;
           let { code, message, data } = dataGotten;
-          if (code != 400) {
+          if (code && code != 400) {
             console.log(message);
             console.log(data);
+            this.showMessage({
+              content: "注册成功",
+              color: "success",
+            });
+          } else {
+            this.showMessage({
+              content: message,
+              color: "error",
+            });
           }
         })
         .catch(() => {

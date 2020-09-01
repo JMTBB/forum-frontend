@@ -5,14 +5,11 @@ let prefix = '/proxy'
 
 axios.interceptors.response.use(    //response interceptor: catch the response error
     res => {
-        console.log('coming...')
-        if (res.status != 200) {
-
-            console.log(res);
-            store.commit('showMessage', { content: res.statusText, color: 'error' });
-            return Promise.resolve(res)
+        if (res.status === 200) {
+            return Promise.resolve(res.data)
+        } else {
+            return Promise.reject(res)
         }
-
     },
     err => {
         console.log('======\n' + err + '\n======');
@@ -35,5 +32,5 @@ axios.interceptors.response.use(    //response interceptor: catch the response e
 
 //登录注册
 
-export const login = params => axios.post(`${prefix}/login`, params).then(res => res.data);
-export const register = params => axios.post(`${prefix}/user`, params).then(res => res.data);
+export const login = params => axios.post(`${prefix}/login`, params);
+export const register = params => axios.post(`${prefix}/user`, params);
