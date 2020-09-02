@@ -1,7 +1,7 @@
 <template>
   <v-container class="blue-grey lighten-5">
     <v-card class="mb-6">
-      <v-container>
+      <v-container class="d-flex justify-center">
         <markdown-it-vue :content="text" />
       </v-container>
     </v-card>
@@ -74,6 +74,8 @@
       <v-btn @click="test()">测试Snackbar</v-btn>
       <v-divider />
       <v-btn @click="injectTest()">注入测试</v-btn>
+      <v-divider />
+      <v-btn @click="logout()">登出</v-btn>
     </v-container>
     <!-- preview of thread start  -->
     <v-card class="mb-1" v-for="(eco, i) in importantLinks" :key="i">
@@ -168,6 +170,7 @@
 <script>
 import MarkdownItVue from "markdown-it-vue";
 import "markdown-it-vue/dist/markdown-it-vue.css";
+import { mapMutations } from "vuex";
 export default {
   components: {
     MarkdownItVue,
@@ -293,6 +296,8 @@ export default {
     ],
   }),
   methods: {
+    ...mapMutations(["logout"]),
+
     test() {
       this.$notifier.showMessage({ content: "Hello, snackbar", color: "info" });
     },

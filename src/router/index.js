@@ -15,6 +15,10 @@ const routes = [
     redirect: '/demo'
   },
   {
+    path: '/home',
+    component: Home,
+  },
+  {
     path: '/about',
     name: 'About',
     // route level code-splitting
@@ -29,7 +33,8 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: Login
+    component: Login,
+    props: true
   },
   {
     path: '/editor',

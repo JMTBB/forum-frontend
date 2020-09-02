@@ -1,8 +1,17 @@
 <template>
   <div>
     <v-card>
-      <v-toolbar flat color="blue-grey" dark>
-        <v-toolbar-title>Submit a post</v-toolbar-title>
+      <v-toolbar flat color="blue darken-2" dark>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon @click="toHome()" v-bind="attrs" v-on="on">
+              <v-icon>mdi-arrow-left</v-icon>
+            </v-btn>
+          </template>
+          <span>返回首页</span>
+        </v-tooltip>
+
+        <v-toolbar-title>新建内容</v-toolbar-title>
       </v-toolbar>
 
       <v-card-text>
@@ -18,10 +27,8 @@
         <v-divider class="my-2"></v-divider>
 
         <v-item-group multiple>
-          <v-subheader>Tags</v-subheader>
-          <v-item v-for="n in 8" :key="n" v-slot:default="{ active, toggle }">
-            <v-chip active-class="purple--text" :input-value="active" @click="toggle">Tag {{ n }}</v-chip>
-          </v-item>
+          <v-subheader>选择板块</v-subheader>
+          <v-autocomplete v-model="values" :items="items" outlined label="输入或选择"></v-autocomplete>
         </v-item-group>
       </v-card-text>
 
@@ -50,7 +57,10 @@ export default {
     title: "",
     content: "",
     showPreview: false,
-    btnStr: "开启",
+
+    items: ["foo", "bar", "fizz", "buzz"],
+    values: ["foo"],
+    value: null,
   }),
   computed: {
     formatted() {
@@ -63,6 +73,11 @@ export default {
   methods: {
     test() {
       console.log(JSON.stringify(this.formatted));
+    },
+    toHome() {
+      if (this.$route.path != "/") {
+        this.$router.push("/");
+      }
     },
   },
 };

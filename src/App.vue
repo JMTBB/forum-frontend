@@ -26,11 +26,13 @@
     <v-main>
       <v-responsive class="pa-6 mx-auto" max-width="1304px">
         <v-row class="pa-0 ma-0">
-          <v-col cols="8" md="8">
-            <router-view />
+          <v-col cols="9" md="9">
+            <transition name="slide">
+              <router-view />
+            </transition>
           </v-col>
-          <v-col cols="4" md="4">
-            <v-card class="mx-auto" color="#26c6da" dark max-width="400">
+          <v-col cols="3" md="3">
+            <!-- <v-card class="mx-auto" color="#26c6da" dark max-width="400">
               <v-card-title>
                 <v-icon large left>mdi-twitter</v-icon>
                 <span class="title font-weight-light">Twitter</span>
@@ -62,7 +64,8 @@
                   </v-row>
                 </v-list-item>
               </v-card-actions>
-            </v-card>
+            </v-card>-->
+            <side-card></side-card>
           </v-col>
         </v-row>
       </v-responsive>
@@ -77,11 +80,13 @@
 
 <script>
 import SnackBar from "./components/GlobalSnackBar.vue";
+import SideCard from "./components/SideCard";
 export default {
   name: "App",
 
   components: {
     SnackBar, //global snackbar
+    SideCard,
   },
 
   props: {

@@ -156,6 +156,7 @@ export default {
     handleLogin() {
       //account login
       this.loading = true;
+      console.log("progress circle: " + this.loading);
       login(this.user)
         .then((dataGotten) => {
           this.loading = false;
@@ -165,17 +166,20 @@ export default {
             console.log(message);
             console.log(data);
 
-            this.showMessage({
-              content: "登录成功",
-              color: "success",
-            });
             this.userToken = "Bearer " + data.jwt;
-            this.addUserInfo({ Authorization: this.userToken });
+            this.addUserInfo({
+              Authorization: this.userToken,
+              Id: data.id,
+              Username: data.username,
+              UserEmail: data.email,
+              UserRoles: data.roles,
+            });
 
-            this.$store.commit("showMessage", {
+            this.showMessage({
               content: data.username,
               color: "success",
             });
+            this.$router.push("/");
           } else {
             this.showMessage({
               content: message,
@@ -183,9 +187,9 @@ export default {
             });
           }
         })
-        .catch((data) => {
-          console.log("登录错误");
-          console.log(data);
+        .catch((err) => {
+          console.log("登录异常");
+          console.log("======\n" + err + "\n======");
         });
     },
     handleRegister() {
