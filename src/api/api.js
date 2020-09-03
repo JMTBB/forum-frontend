@@ -18,15 +18,15 @@ axios.interceptors.response.use(    //response interceptor: catch the response e
 
     }
 )
-// axios.interceptors.request.use(     //add user tokan while sending a request
-//     config => {
-//         if (localStorage.getItem('Authorization')) {
-//             config.headers.Authorization = localStorage.getItem('Authorization');
-//         }
-//         return config;
-//     },
-//     err => Promise.reject(err)
-// )
+axios.interceptors.request.use(     //add user tokan while sending a request
+    config => {
+        if (localStorage.getItem('Authorization')) {
+            config.headers.Authorization = localStorage.getItem('Authorization');
+        }
+        return config;
+    },
+    err => Promise.reject(err)
+)
 
 
 
@@ -34,3 +34,6 @@ axios.interceptors.response.use(    //response interceptor: catch the response e
 
 export const login = params => axios.post(`${prefix}/login`, params);
 export const register = params => axios.post(`${prefix}/user`, params);
+
+//获取可发帖板块
+export const boardAccess = params => axios.get(`${prefix}/limit/board/${params}`);

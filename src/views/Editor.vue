@@ -28,7 +28,19 @@
 
         <v-item-group multiple>
           <v-subheader>选择板块</v-subheader>
-          <v-autocomplete v-model="values" :items="items" outlined label="输入或选择"></v-autocomplete>
+          <v-autocomplete
+            v-model="targetBoard"
+            :items="boardAccess"
+            outlined
+            label="输入或选择"
+            item-text="boardName"
+            item-value="boardId"
+            auto-select-firs
+          >
+            <template v-slot:item="data">
+              <v-list-item-content v-text="data.item.boardName" />
+            </template>
+          </v-autocomplete>
         </v-item-group>
       </v-card-text>
 
@@ -52,6 +64,7 @@
 <script>
 import MarkdownItVue from "markdown-it-vue";
 import "markdown-it-vue/dist/markdown-it-vue.css";
+import { boardAccess } from "../api/api";
 export default {
   data: () => ({
     title: "",
@@ -60,11 +73,16 @@ export default {
 
     items: ["foo", "bar", "fizz", "buzz"],
     values: ["foo"],
-    value: null,
+    targetBoard: null,
+    boardAccess: [],
   }),
   computed: {
     formatted() {
       return "# " + this.title + "\n" + this.content;
+    },
+    demo() {
+      console.log(this.targetBoard);
+      return this.targetBoard;
     },
   },
   components: {
@@ -79,6 +97,19 @@ export default {
         this.$router.push("/");
       }
     },
+    getAccessableBoard() {
+      let id = this.$store.state.Info.userId;
+      if (id == null) return;
+      boardAccess(id).then((result) => {
+        let { code, data } = result;
+        if (code == 200) {
+          this.boardAccess = data;
+        }
+      });
+    },
+  },
+  created() {
+    this.getAccessableBoard();
   },
 };
 </script>
