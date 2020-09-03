@@ -49,7 +49,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn class="mx-6" text @click="showPreview = !showPreview">{{showPreview ? '关闭': '开启'}}预览</v-btn>
-        <v-btn color="success" depressed @click="test()">Post</v-btn>
+        <v-btn color="success" depressed @click="handleSubmit()">Post</v-btn>
       </v-card-actions>
     </v-card>
     <v-expand-transition>
@@ -64,16 +64,15 @@
 <script>
 import MarkdownItVue from "markdown-it-vue";
 import "markdown-it-vue/dist/markdown-it-vue.css";
-import { boardAccess } from "../api/api";
+import { boardAccess, addThread } from "../api/api";
+import { mapMutations } from "vuex";
+
 export default {
   data: () => ({
     title: "",
     content: "",
     showPreview: false,
-
-    items: ["foo", "bar", "fizz", "buzz"],
-    values: ["foo"],
-    targetBoard: null,
+    targetBoard: 2,
     boardAccess: [],
   }),
   computed: {
@@ -89,8 +88,9 @@ export default {
     MarkdownItVue,
   },
   methods: {
+    ...mapMutations(["showMessage"]),
     test() {
-      console.log(JSON.stringify(this.formatted));
+      console.log(this.targetBoard);
     },
     toHome() {
       if (this.$route.path != "/") {
@@ -104,6 +104,20 @@ export default {
         let { code, data } = result;
         if (code == 200) {
           this.boardAccess = data;
+        }
+      });
+    },
+    handleSubmit() {
+      addThread({
+        title: this.title,
+        content: this.formatted,
+        userId: this.$store.state.Info.userId,
+        boardId: this.targetBoard,
+      }).then((result) => {
+        let { code, data } = result;
+        if (code === 200) {
+          this.showMessage({ content: "发布成功", color: "success" });
+          this.$router.push({ name: "Viewer", params: { id: data } });
         }
       });
     },

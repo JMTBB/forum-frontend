@@ -33,7 +33,13 @@ axios.interceptors.request.use(     //add user tokan while sending a request
 //登录注册
 
 export const login = params => axios.post(`${prefix}/login`, params);
-export const register = params => axios.post(`${prefix}/user`, params);
+export const register = params => axios.post(`${prefix}/register`, params);
 
 //获取可发帖板块
 export const boardAccess = params => axios.get(`${prefix}/limit/board/${params}`);
+
+
+
+//发帖
+export const addThread = params => axios.post(`${prefix}/thread`, params);
+export const getThreadById = params => axios.get(`${prefix}/thread/${params}`);

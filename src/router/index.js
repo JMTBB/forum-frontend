@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 
 import Login from '../components/LoginAndRegister.vue'
 import Editor from '../views/Editor.vue'
+import Viewer from '../views/Viewer.vue'
 
 Vue.use(VueRouter)
 
@@ -40,6 +41,12 @@ const routes = [
     path: '/editor',
     name: 'Editor',
     component: Editor
+  },
+  {
+    path: '/viewer',
+    name: 'Viewer',
+    component: Viewer,
+    props: true
   }
 ]
 
