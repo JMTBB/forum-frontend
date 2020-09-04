@@ -19,6 +19,8 @@ export default new Vuex.Store({
       username: '',
       userEmail: '',
       userRoles: null,
+      userExp: null,
+      userLevel: null,
     },
 
 
@@ -39,6 +41,8 @@ export default new Vuex.Store({
       state.Info.username = payload.Username;
       state.Info.userEmail = payload.UserEmail;
       state.Info.userRoles = payload.UserRoles;
+      state.Info.userExp = payload.UserExp;
+      state.Info.userLevel = payload.UserLevel;
       localStorage.setItem('info', JSON.stringify(state.Info));
     },
     logout(state) {
@@ -49,6 +53,8 @@ export default new Vuex.Store({
         usename: '',
         userEmail: '',
         userRoles: null,
+        userExp: null,
+        userLevel: null
       };
       localStorage.removeItem('Authorization');
       localStorage.removeItem('flag');

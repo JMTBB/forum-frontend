@@ -159,7 +159,6 @@ export default {
       console.log("progress circle: " + this.loading);
       login(this.user)
         .then((dataGotten) => {
-          this.loading = false;
           let { code, message, data } = dataGotten;
           console.log(dataGotten);
           if (code && code != 400) {
@@ -172,6 +171,8 @@ export default {
               Id: data.id,
               Username: data.username,
               UserEmail: data.email,
+              UserExp: data.exp,
+              UserLevel: data.level,
               UserRoles: data.roles,
             });
 
@@ -190,14 +191,14 @@ export default {
         .catch((err) => {
           console.log("登录异常");
           console.log("======\n" + err + "\n======");
-        });
+        })
+        .finally(() => (this.loading = false));
     },
     handleRegister() {
       this.loading = true;
       //account register
       register(this.user)
         .then((dataGotten) => {
-          this.loading = false;
           let { code, message, data } = dataGotten;
           if (code && code != 400) {
             console.log(message);
@@ -215,7 +216,8 @@ export default {
         })
         .catch(() => {
           console.log("注册错误");
-        });
+        })
+        .finally(() => (this.loading = false));
     },
   },
   computed: {

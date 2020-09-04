@@ -32,6 +32,10 @@ const routes = [
     component: () => import('../components/HelloWorld.vue')
   },
   {
+    path: '/2demo',
+    component: () => import('../components/ThreadList.vue')
+  },
+  {
     path: '/login',
     name: 'Login',
     component: Login,

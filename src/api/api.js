@@ -34,6 +34,7 @@ axios.interceptors.request.use(     //add user tokan while sending a request
 
 export const login = params => axios.post(`${prefix}/login`, params);
 export const register = params => axios.post(`${prefix}/register`, params);
+export const getAvatar = params => axios.get(`${prefix}/avatar/${params}`);
 
 //获取可发帖板块
 export const boardAccess = params => axios.get(`${prefix}/limit/board/${params}`);
