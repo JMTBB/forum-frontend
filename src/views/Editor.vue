@@ -49,7 +49,11 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn class="mx-6" text @click="showPreview = !showPreview">{{showPreview ? '关闭': '开启'}}预览</v-btn>
-        <v-btn color="success" depressed @click="handleSubmit()">Post</v-btn>
+        <v-btn
+          color="success"
+          depressed
+          @click="edit?handleUpdate(): handleSubmit()"
+        >{{edit? '更新': '发布'}}</v-btn>
       </v-card-actions>
     </v-card>
     <v-expand-transition>
@@ -64,7 +68,12 @@
 <script>
 import MarkdownItVue from "markdown-it-vue";
 import "markdown-it-vue/dist/markdown-it-vue.css";
-import { boardAccess, addThread } from "../api/api";
+import {
+  boardAccess,
+  addThread,
+  getThreadById,
+  updateThread,
+} from "../api/api";
 import { mapMutations } from "vuex";
 
 export default {
@@ -74,6 +83,8 @@ export default {
     showPreview: false,
     targetBoard: 2,
     boardAccess: [],
+    edit: false,
+    threadId: null,
   }),
   computed: {
     formatted() {
@@ -88,7 +99,7 @@ export default {
     MarkdownItVue,
   },
   methods: {
-    ...mapMutations(["showMessage"]),
+    ...mapMutations(["showMessage", "getExp"]),
     test() {
       console.log(this.targetBoard);
     },
@@ -107,6 +118,20 @@ export default {
         }
       });
     },
+    getThread(id) {
+      getThreadById(id)
+        .then((result) => {
+          let { code, data } = result;
+          if (code == 200) {
+            this.title = data.threadTitle;
+            let omit = data.threadContent.substring(2);
+            omit = omit.substring(data.threadTitle.length + 1);
+            this.content = omit;
+            this.threadId = data.threadId;
+          }
+        })
+        .catch((err) => this.showMessage({ content: err, color: "error" }));
+    },
     handleSubmit() {
       addThread({
         title: this.title,
@@ -117,6 +142,20 @@ export default {
         let { code, data } = result;
         if (code === 200) {
           this.showMessage({ content: "发布成功", color: "success" });
+          this.getExp();
+          this.$router.push({ name: "Viewer", params: { id: data } });
+        }
+      });
+    },
+    handleUpdate() {
+      updateThread(this.threadId, {
+        title: this.title,
+        content: this.formatted,
+        boardId: this.targetBoard,
+      }).then((result) => {
+        let { code, data } = result;
+        if (code == 200) {
+          this.showMessage({ content: "修改成功", color: "success" });
           this.$router.push({ name: "Viewer", params: { id: data } });
         }
       });
@@ -124,6 +163,11 @@ export default {
   },
   created() {
     this.getAccessableBoard();
+
+    if (this.$route.query.id) {
+      this.getThread(this.$route.query.id);
+      this.edit = true;
+    }
   },
 };
 </script>

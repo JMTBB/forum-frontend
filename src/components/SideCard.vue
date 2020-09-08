@@ -46,7 +46,26 @@
               </v-container>
               <div class="text-center text-h6 white--text" v-text="userName"></div>
               <div class="text-center white--text text-caption" v-text="userEmail"></div>
-              <div class="text-center"></div>
+              <div class="d-flex justify-center align-center px-12">
+                <div class="white--text ita">Lv.{{userLevel}}</div>
+                <v-progress-linear
+                  v-model="userExp"
+                  class="mx-2 rounded"
+                  striped
+                  color="white"
+                  height="10"
+                >
+                  <template v-slot="{ value }">
+                    <span class="text-caption">{{ value }}</span>
+                  </template>
+                </v-progress-linear>
+                <v-tooltip right>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon small color="white" v-bind="attrs" v-on="on">mdi-check-circle-outline</v-icon>
+                  </template>
+                  <span>签到</span>
+                </v-tooltip>
+              </div>
             </v-col>
           </v-row>
         </v-sheet>
@@ -57,7 +76,7 @@
               <v-icon left>mdi-pencil-outline</v-icon>发布
             </v-btn>
             <v-spacer />
-            <v-btn outlined>
+            <v-btn outlined @click="toProfile()">
               <v-icon left>mdi-account-outline</v-icon>我的
             </v-btn>
           </v-row>
@@ -84,6 +103,12 @@ export default {
     },
     userName() {
       return this.$store.state.Info.username;
+    },
+    userExp() {
+      return this.$store.state.Info.userExp % 100;
+    },
+    userLevel() {
+      return this.$store.state.Info.userLevel;
     },
   },
   watch: {
@@ -116,11 +141,18 @@ export default {
       if (this.$route.path != "/editor");
       this.$router.push("/editor");
     },
+    toProfile() {
+      if (this.$route.path != "/profile") this.$router.push("/profile");
+    },
   },
 };
 </script>
 <style>
 .gradient-bg {
   background-image: linear-gradient(to bottom right, #5487fc, #26a4fd);
+}
+.ita {
+  font-style: italic;
+  font-size: small;
 }
 </style>

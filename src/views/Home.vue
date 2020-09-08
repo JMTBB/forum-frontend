@@ -1,99 +1,168 @@
 <template>
   <div>
-    <v-toolbar color="blue accent-1">
+    <v-toolbar class="rounded">
       <v-toolbar-title class="title mr-6 hidden-sm-and-down">Threads</v-toolbar-title>
-      <v-autocomplete
-        v-model="model"
-        :items="items"
-        :loading="isLoading"
-        :search-input.sync="search"
-        chips
-        clearable
-        hide-details
-        hide-selected
-        item-text="name"
-        item-value="symbol"
-        label="Search for a coin..."
-        solo
-      >
-        <template v-slot:no-data>
-          <v-list-item>
-            <v-list-item-title>
-              Search for your favorite
-              <strong>Cryptocurrency</strong>
-            </v-list-item-title>
-          </v-list-item>
-        </template>
-        <template v-slot:selection="{ attr, on, item, selected }">
-          <v-chip
-            v-bind="attr"
-            :input-value="selected"
-            color="blue-grey"
-            class="white--text"
-            v-on="on"
-          >
-            <v-icon left>mdi-coin</v-icon>
-            <span v-text="item.name"></span>
-          </v-chip>
-        </template>
-        <template v-slot:item="{ item }">
-          <v-list-item-avatar
-            color="indigo"
-            class="headline font-weight-light white--text"
-          >{{ item.name.charAt(0) }}</v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.name"></v-list-item-title>
-            <v-list-item-subtitle v-text="item.symbol"></v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-action>
-            <v-icon>mdi-coin</v-icon>
-          </v-list-item-action>
-        </template>
-      </v-autocomplete>
+
       <template v-slot:extension>
-        <v-tabs v-model="tab" :hide-slider="!model" color="blue-grey" slider-color="blue-grey">
-          <v-tab :disabled="!model">News</v-tab>
-          <v-tab :disabled="!model">Trading</v-tab>
-          <v-tab :disabled="!model">Blog</v-tab>
+        <v-tabs v-model="tab" fixed-tabs color="blue-grey darken-4" slider-color="blue-grey">
+          <v-tab v-for="board in boards" :key="board.boardId">
+            {{board.boardName}}
+            <span></span>
+            <v-tooltip
+              bottom
+              v-if="!accessible(board.boardAccessLevel)&&!isManager(board.boardManager.userId)"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                  :color="hasManagerRole() ? 'primary':'error'"
+                  v-bind="attrs"
+                  v-on="on"
+                >mdi-lock-outline</v-icon>
+              </template>
+              <span>{{hasManagerRole() ? "管理员不设限": "等级不足或未登录"}}</span>
+            </v-tooltip>
+            <v-tooltip bottom v-if="isManager(board.boardManager.userId)">
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon color="success" v-bind="attrs" v-on="on">mdi-account-outline</v-icon>
+              </template>
+              <span>管理员</span>
+            </v-tooltip>
+          </v-tab>
         </v-tabs>
       </template>
+      <v-progress-linear :active="isLoading" :indeterminate="isLoading" absolute bottom></v-progress-linear>
     </v-toolbar>
+    <v-tabs-items v-model="tab" class="mt-2 gray-back">
+      <v-tab-item v-for="board in boards" :key="board.boardId" class="gray-back">
+        <v-expand-transition>
+          <v-card v-show="desShow" class="mb-2">
+            <v-row align="center">
+              <v-col cols="11" class="pl-8">
+                <span>{{ board.boardDescription }}</span>
+              </v-col>
+
+              <v-col cols="1">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{on, attrs}">
+                    <v-btn icon @click="desShow = !desShow" v-bind="attrs" v-on="on">
+                      <v-icon>mdi-delete-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>关闭</span>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-expand-transition>
+
+        <ThreadList
+          :type="determineType(board.boardAccessLevel,board.boardManager.userId)"
+          :value="board.boardId"
+        ></ThreadList>
+      </v-tab-item>
+    </v-tabs-items>
   </div>
 </template>
 
 <script>
+import { mapMutations } from "vuex";
+import { getAllBoards } from "../api/api";
+import ThreadList from "../components/ThreadList";
 // @ is an alias to /src
 export default {
   data: () => ({
     isLoading: false,
-    items: [],
-    model: null,
-    search: null,
     tab: null,
+    boards: null,
+    desShow: true,
   }),
-
-  watch: {
-    model(val) {
-      if (val != null) this.tab = 0;
-      else this.tab = null;
+  components: {
+    ThreadList,
+  },
+  computed: {
+    roles() {
+      return this.$store.state.Info.userRoles;
     },
-    search() {
-      // Items have already been loaded
-      if (this.items.length > 0) return;
-
+  },
+  watch: {
+    tab(val) {
+      console.log("curtab:" + val);
+    },
+  },
+  methods: {
+    ...mapMutations(["showMessage"]),
+    init() {
       this.isLoading = true;
-
-      // Lazily load input items
-      fetch("https://api.coingecko.com/api/v3/coins/list")
-        .then((res) => res.clone().json())
-        .then((res) => {
-          this.items = res;
+      getAllBoards()
+        .then((result) => {
+          let { code, data } = result;
+          if (code == 200) {
+            this.boards = data;
+          }
         })
         .catch((err) => {
-          console.log(err);
+          this.showMessage({ content: err, color: "error" });
         })
-        .finally(() => (this.isLoading = false));
+        .finally(() => {
+          this.isLoading = false;
+          if (this.$route.query.id) {
+            console.log("catching: " + this.$route.query.id);
+            this.tab = this.$route.query.id;
+          }
+        });
     },
+    accessible(limit) {
+      let level;
+      if (this.$store.state.logined) {
+        level = this.$store.state.Info.userLevel;
+      } else {
+        level = 0;
+      }
+      return level >= limit;
+    },
+    isManager(id) {
+      if (
+        this.$store.state.Info.userId != null &&
+        this.$store.state.Info.userId == id
+      )
+        return true;
+      else return false;
+    },
+    checkRole(role) {
+      if (this.roles == null || this.roles.length == 0) {
+        return false;
+      }
+      return this.roles.includes(role);
+    },
+    hasManagerRole() {
+      if (
+        this.checkRole("ROLE_BOARD_MANAGER") ||
+        this.checkRole("ROLE_GLOBAL_MANAGER")
+      )
+        return true;
+      else return false;
+    },
+    determineType(accessLevel, id) {
+      if (
+        this.$store.state.Info.userLevel < accessLevel &&
+        !this.isManager(id) &&
+        !this.hasManagerRole()
+      ) {
+        return "accessDeny";
+      } else if (this.isManager(id)) {
+        return "managerMode";
+      } else {
+        return "boardId";
+      }
+    },
+  },
+  created() {
+    this.init();
   },
 };
 </script>
+<style>
+.gray-back {
+  background-color: #e2e2e2;
+}
+</style>

@@ -4,22 +4,19 @@
       <!-- blue darken-3 -->
       <v-responsive class="mx-auto" max-width="1304px">
         <v-row justify="center" align="center" class="px-4">
-          <v-toolbar-title style="width: 300px" class="ml-0 pl-4">
+          <v-toolbar-title style="width: 300px" class="ml-0 pl-4" @click="toHome()">
             <!-- <span class="hidden-sm-and-down">Google Contacts</span> -->
             <h1 class="font-weight-bold display-3">BASiL</h1>
           </v-toolbar-title>
           <v-spacer />
-          <v-btn icon>
-            <v-icon>mdi-apps</v-icon>
-          </v-btn>
-          <v-btn icon>
-            <v-icon>mdi-bell</v-icon>
-          </v-btn>
-          <v-btn icon large>
-            <v-avatar size="32px" item>
-              <v-img src="https://cdn.vuetifyjs.com/images/logos/logo.svg" alt="Vuetify"></v-img>
-            </v-avatar>
-          </v-btn>
+          <v-tooltip bottom class="mr-4">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn v-bind="attrs" v-on="on" @click="logout();out()" icon>
+                <v-icon>mdi-exit-to-app</v-icon>
+              </v-btn>
+            </template>
+            <span>登出</span>
+          </v-tooltip>
         </v-row>
       </v-responsive>
     </v-app-bar>
@@ -79,6 +76,7 @@
 </template>
 
 <script>
+import { mapMutations } from "vuex";
 import SnackBar from "./components/GlobalSnackBar.vue";
 import SideCard from "./components/SideCard";
 export default {
@@ -92,7 +90,18 @@ export default {
   props: {
     source: String,
   },
-  data: () => ({}),
+  data: () => ({
+    routerAlive: true,
+  }),
+  methods: {
+    ...mapMutations(["logout"]),
+    toHome() {
+      if (this.$route.path != "/") this.$router.push({ path: "/" });
+    },
+    out() {
+      if (this.$route.path == "/home") this.$router.go(0);
+    },
+  },
 };
 </script>
 <style>

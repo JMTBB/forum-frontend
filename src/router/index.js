@@ -5,6 +5,7 @@ import Home from '../views/Home.vue'
 import Login from '../components/LoginAndRegister.vue'
 import Editor from '../views/Editor.vue'
 import Viewer from '../views/Viewer.vue'
+import Profile from '../views/Profile.vue'
 
 Vue.use(VueRouter)
 
@@ -13,7 +14,7 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
-    redirect: '/demo'
+    redirect: '/home'
   },
   {
     path: '/home',
@@ -33,7 +34,7 @@ const routes = [
   },
   {
     path: '/2demo',
-    component: () => import('../components/ThreadList.vue')
+    component: () => import('../components/BoardsTable.vue')
   },
   {
     path: '/login',
@@ -47,10 +48,15 @@ const routes = [
     component: Editor
   },
   {
-    path: '/viewer',
+    path: '/profile',
+    name: 'Profile',
+    component: Profile
+  },
+  {
+    path: '/viewer/:id',
     name: 'Viewer',
     component: Viewer,
-    props: true
+
   }
 ]
 

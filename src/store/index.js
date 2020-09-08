@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { updateExp } from '../api/api'
 
 Vue.use(Vuex)
 
@@ -59,7 +60,23 @@ export default new Vuex.Store({
       localStorage.removeItem('Authorization');
       localStorage.removeItem('flag');
       localStorage.removeItem('info');
+    },
+    getExp(state) {
+      updateExp(state.Info.userId).then((result) => {
+        let { code, data } = result;
+        if (code == 200) {
+          state.Info.userExp = parseInt(data);
+          state.Info.userLevel = Math.floor(data / 100) + 1;
+          localStorage.setItem('info', JSON.stringify(state.Info));
+        }
+
+
+
+      }).catch((err) => {
+        this.showMessage({ content: err, color: 'error' });
+      })
     }
+
   },
   actions: {
   },

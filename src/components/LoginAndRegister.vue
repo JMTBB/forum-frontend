@@ -217,7 +217,10 @@ export default {
         .catch(() => {
           console.log("注册错误");
         })
-        .finally(() => (this.loading = false));
+        .finally(() => {
+          this.loading = false;
+          this.login = true;
+        });
     },
   },
   computed: {
