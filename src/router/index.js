@@ -34,7 +34,7 @@ const routes = [
   },
   {
     path: '/2demo',
-    component: () => import('../components/BoardsTable.vue')
+    component: () => import('../components/GlobalManage.vue')
   },
   {
     path: '/login',

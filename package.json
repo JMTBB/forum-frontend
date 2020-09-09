@@ -44,7 +44,9 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "vue/valid-v-slot": "warn"
+    }
   },
   "browserslist": [
     "> 1%",

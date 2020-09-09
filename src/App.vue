@@ -9,7 +9,7 @@
             <h1 class="font-weight-bold display-3">BASiL</h1>
           </v-toolbar-title>
           <v-spacer />
-          <v-tooltip bottom class="mr-4">
+          <v-tooltip bottom class="mr-4" v-if="logined">
             <template v-slot:activator="{ on, attrs }">
               <v-btn v-bind="attrs" v-on="on" @click="logout();out()" icon>
                 <v-icon>mdi-exit-to-app</v-icon>
@@ -86,7 +86,13 @@ export default {
     SnackBar, //global snackbar
     SideCard,
   },
-
+  computed: {
+    logined() {
+      if (this.$store.state.logined == null || !this.$store.state.logined)
+        return false;
+      else return true;
+    },
+  },
   props: {
     source: String,
   },
@@ -100,6 +106,7 @@ export default {
     },
     out() {
       if (this.$route.path == "/home") this.$router.go(0);
+      else this.toHome();
     },
   },
 };

@@ -11,7 +11,7 @@
           <span>返回首页</span>
         </v-tooltip>
 
-        <v-toolbar-title>新建内容</v-toolbar-title>
+        <v-toolbar-title>{{header}}内容</v-toolbar-title>
       </v-toolbar>
 
       <v-card-text>
@@ -85,6 +85,7 @@ export default {
     boardAccess: [],
     edit: false,
     threadId: null,
+    header: "新建",
   }),
   computed: {
     formatted() {
@@ -167,6 +168,7 @@ export default {
     if (this.$route.query.id) {
       this.getThread(this.$route.query.id);
       this.edit = true;
+      this.header = "编辑";
     }
   },
 };
