@@ -13,7 +13,7 @@
       <v-toolbar-title>管理</v-toolbar-title>
     </v-toolbar>
     <v-tabs v-model="tab">
-      <v-tab v-for="item in options" :key="item.id">{{item.name}}</v-tab>
+      <v-tab v-for="item in options" :key="item.id">{{ item.name }}</v-tab>
       <v-tabs-items v-model="tab">
         <v-tab-item>
           <Info></Info>
@@ -28,7 +28,7 @@
           <BoardList></BoardList>
         </v-tab-item>
         <v-tab-item v-if="checkRole('ROLE_GLOBAL_MANAGER')">
-          <v-alert border="bottom" colored-border type="warning" elevation="2">暂时没有评论！</v-alert>
+          <Global></Global>
         </v-tab-item>
       </v-tabs-items>
     </v-tabs>
@@ -40,6 +40,7 @@ import Info from "../components/UserInfo";
 import ThreadList from "../components/ThreadList";
 import ReplyList from "../components/ReplyList";
 import BoardList from "../components/BoardsTable";
+import Global from "../components/GlobalManage";
 export default {
   data: () => ({
     options: [
@@ -64,6 +65,7 @@ export default {
     ThreadList,
     ReplyList,
     BoardList,
+    Global,
   },
   methods: {
     checkRole(role) {

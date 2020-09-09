@@ -40,12 +40,17 @@ export const getAvatar = params => axios.get(`${prefix}/avatar/${params}`);
 export const updateExp = params => axios.get(`${prefix}/user/exp/${params}`)
 export const getInfo = params => axios.get(`${prefix}/user/${params}`)
 export const updateInfo = (id, payload) => axios.post(`${prefix}/user/${id}`, payload)
-//获取可发帖板块
+export const getAllUesr = () => axios.get(`${prefix}/user`);
+
+//板块
 export const boardAccess = params => axios.get(`${prefix}/limit/board/${params}`);
 export const getAllBoards = () => axios.get(`${prefix}/board`);
 export const getTabSeq = (threadId) => axios.get(`${prefix}/board/count/${threadId}`)
 export const getManageBoards = userId => axios.get(`${prefix}/board/admin/${userId}`)
 export const updateBoard = (board) => axios.put(`${prefix}/board`, board);
+export const addBoard = (board) => axios.post(`${prefix}/board`, board);
+export const deleteBoard = id => axios.delete(`${prefix}/board/${id}`);
+
 //发帖
 export const addThread = params => axios.post(`${prefix}/thread`, params);
 export const getThreadById = params => axios.get(`${prefix}/thread/${params}`);

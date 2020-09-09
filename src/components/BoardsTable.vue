@@ -1,23 +1,42 @@
 <template>
-  <div>
-    <v-row justify="center">
+  <div class="mt-2">
+    <v-alert
+      v-if="zeroFlag"
+      border="bottom"
+      colored-border
+      type="warning"
+      elevation="2"
+      class="mt-2"
+      >暂时没有管理的板块！</v-alert
+    >
+    <v-row justify="center" v-else>
       <v-expansion-panels popout>
-        <v-expansion-panel v-for="(board,i) in boards" :key="i">
+        <v-expansion-panel v-for="(board, i) in boards" :key="i">
           <v-expansion-panel-header color="blue accent-1">
-            <span class="text-h6">{{board.boardName}}</span>
+            <span class="text-h6">{{ board.boardName }}</span>
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-row>
               <v-col cols="9">
-                <div class="text-body-1">描述：{{board.boardDescription}}</div>
-                <div class="text-body-1">等级限制：{{board.boardAccessLevel}}</div>
+                <div class="text-body-1">
+                  描述：{{ board.boardDescription }}
+                </div>
+                <div class="text-body-1">
+                  等级限制：{{ board.boardAccessLevel }}
+                </div>
               </v-col>
 
               <v-col cols="3" class="d-flex justify-end align-end">
                 <v-btn class="mr-2" @click="handleList(board)">查看</v-btn>
                 <v-dialog v-model="dialog" persistent max-width="300px">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn v-bind="attrs" v-on="on" color="primary" @click="editItem(board)">编辑</v-btn>
+                    <v-btn
+                      v-bind="attrs"
+                      v-on="on"
+                      color="primary"
+                      @click="editItem(board)"
+                      >编辑</v-btn
+                    >
                   </template>
                   <v-card>
                     <v-card-title>
@@ -27,7 +46,11 @@
                       <v-container>
                         <v-row>
                           <v-col cols="12">
-                            <v-text-field v-model="editedItem.boardName" label="板块名称" class="py-0"></v-text-field>
+                            <v-text-field
+                              v-model="editedItem.boardName"
+                              label="板块名称"
+                              class="py-0"
+                            ></v-text-field>
                           </v-col>
                           <v-col cols="12">
                             <v-text-field
@@ -48,7 +71,7 @@
                     </v-card-text>
                     <v-card-actions class="pr-6 pb-6 pt-0">
                       <v-spacer />
-                      <v-btn @click="dialog=false">取消</v-btn>
+                      <v-btn @click="dialog = false">取消</v-btn>
                       <v-btn color="success" @click="updateItem()">更新</v-btn>
                     </v-card-actions>
                   </v-card>
@@ -108,6 +131,7 @@ export default {
     },
     editedIndex: 0,
     boardToList: null,
+    zeroFlag: true,
   }),
   computed: {
     userId() {
@@ -128,6 +152,7 @@ export default {
         .then((result) => {
           let { code, data } = result;
           if (code == 200) this.boards = data;
+          if (data.length > 0) this.zeroFlag = false;
         })
         .catch((err) => this.showMessage({ content: err, color: "error" }));
     },
