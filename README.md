@@ -1,4 +1,8 @@
-# forum
+# Frontend of a forum with vue
+
+- Vue Router
+- Vuex
+- Vuetify
 
 ## Project setup
 ```
